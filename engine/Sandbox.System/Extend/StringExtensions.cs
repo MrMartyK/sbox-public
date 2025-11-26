@@ -124,7 +124,8 @@ public static partial class SandboxSystemExtensions
 		return $"{path[..^curExt.Length]}{ext}";
 	}
 
-	static Regex simplifyregex = new Regex( @"[^\\/]+(?<!\.\.)[\\/]\.\.[\\/]", RegexOptions.Compiled );
+	[GeneratedRegex( @"[^\\/]+(?<!\.\.)[\\/]\.\.[\\/]" )]
+	private static partial Regex SimplifyPathRegex();
 
 	/// <summary>
 	/// Gets rid of ../'s (from /path/folder/../file.txt to /path/file.txt)
@@ -135,7 +136,7 @@ public static partial class SandboxSystemExtensions
 	{
 		while ( true )
 		{
-			var newPath = simplifyregex.Replace( str, "" );
+			var newPath = SimplifyPathRegex().Replace( str, "" );
 			if ( newPath == str ) break;
 			str = newPath;
 		}
@@ -143,7 +144,8 @@ public static partial class SandboxSystemExtensions
 	}
 
 
-	static Regex splitregex = new Regex( "\"(?<1>[^\"]+)?\"|'(?<1>[^']+)?'|(?<1>\\S+)", RegexOptions.Compiled );
+	[GeneratedRegex( "\"(?<1>[^\"]+)?\"|'(?<1>[^']+)?'|(?<1>\\S+)" )]
+	private static partial Regex SplitQuotesRegex();
 
 	/// <summary>
 	/// in  : I am "splitting a" string "because it's fun "
@@ -154,7 +156,7 @@ public static partial class SandboxSystemExtensions
 		// Hide backslashed quotes - so we can retain them
 		input = input.Replace( "\\\"", "&qute;" );
 
-		MatchCollection collection = splitregex.Matches( input );
+		MatchCollection collection = SplitQuotesRegex().Matches( input );
 
 		string[] strArray = new string[collection.Count];
 		for ( int i = 0; i < collection.Count; i++ )
